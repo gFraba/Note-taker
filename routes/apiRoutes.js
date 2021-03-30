@@ -3,17 +3,17 @@ const fs = require('fs');
 
 module.exports = function (app) {
     
-    
+    // get existing notes if any are stored in json
     app.get("/api/notes", function (req, res) {
-        // console.log("Getting Notes");
         fs.readFile("db/db.json", "utf8", (err, data) => {
             if (err) throw err;
             let notes = JSON.parse(data);
             res.json(notes);
         });
+        
     });
 
-    
+    // post new notes to json
     app.post("/api/notes", function (req, res) {
         fs.readFile("db/db.json", "utf8", (err, data) => {
             if (err) throw err;
@@ -27,16 +27,14 @@ module.exports = function (app) {
             notes.push(newNote);
 
             fs.writeFileSync("db/db.json", JSON.stringify(notes), "utf8", (err, data) => {
-                console.log("New note added");
                 if (err) throw err;
-                
-            });
-
+                });
+            console.log("New note added");
             res.json(notes);
         });
     });
 
-
+    // delete existing note
     app.delete("/api/notes/:id", function (req, res) {
         fs.readFile("db/db.json", "utf8", (err, data) => {
             if (err) throw err;
@@ -52,13 +50,12 @@ module.exports = function (app) {
             for (currNote of notes) {
                 currNote.id = newNotesId.toString();
                 newNotesId++;
-            }
+            };
 
             fs.writeFileSync("db/db.json", JSON.stringify(notes), "utf8", (err, data) => {
                 if (err) throw err;
-                console.log("Note deleted");
-            });
-
+                });
+            console.log("Note deleted");
             res.json(notes);
         });
     });
